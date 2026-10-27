@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../ms-pedidos360-ordenes"
+		},
+		{
+			"path": "../ms-pedidos360-catalogo"
+		},
+		{
+			"path": "../ms-pedidos360-bff"
+		},
+		{
+			"path": "../../frontCloud"
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic"
+	}
+}
