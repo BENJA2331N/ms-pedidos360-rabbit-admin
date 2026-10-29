@@ -6,5 +6,6 @@ application-local.properties
 application-local.yml
 *.iml
 .vscode/
+*.code-workspace
 *.log
 .DS_Store
