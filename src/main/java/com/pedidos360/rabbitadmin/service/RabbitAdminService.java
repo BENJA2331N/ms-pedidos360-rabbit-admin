@@ -25,9 +25,20 @@ public class RabbitAdminService {
 
     /** Declara (crea) una cola. Es idempotente si ya existe con los mismos parámetros. */
     public void createQueue(QueueAdminRequestDTO dto) {
-        Queue queue = new Queue(dto.getName().trim(), dto.isDurable());
+        String name = dto.getName().trim();
+        QueueBuilder builder = dto.isDurable() ? QueueBuilder.durable(name) : QueueBuilder.nonDurable(name);
+        if (dto.getArguments() != null && !dto.getArguments().isEmpty()) {
+            builder.withArguments(dto.getArguments());
+        }
+        if (dto.getDeadLetterExchange() != null && !dto.getDeadLetterExchange().isBlank()) {
+            builder.deadLetterExchange(dto.getDeadLetterExchange().trim());
+        }
+        if (dto.getDeadLetterRoutingKey() != null && !dto.getDeadLetterRoutingKey().isBlank()) {
+            builder.deadLetterRoutingKey(dto.getDeadLetterRoutingKey().trim());
+        }
+        Queue queue = builder.build();
         amqpAdmin.declareQueue(queue);
-        log.info("Cola declarada: {} (durable={})", queue.getName(), queue.isDurable());
+        log.info("Cola declarada: {} (durable={}, args={})", queue.getName(), queue.isDurable(), queue.getArguments());
     }
 
     /** Elimina una cola. @return true si RabbitMQ confirmó la eliminación. */

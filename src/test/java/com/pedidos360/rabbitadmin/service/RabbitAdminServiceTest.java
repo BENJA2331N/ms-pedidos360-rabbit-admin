@@ -40,6 +40,23 @@ class RabbitAdminServiceTest {
     }
 
     @Test
+    @DisplayName("Crear cola con DLX: configura x-dead-letter-exchange y x-dead-letter-routing-key")
+    void createQueueWithDeadLetter() {
+        QueueAdminRequestDTO dto = new QueueAdminRequestDTO();
+        dto.setName("cola.principal");
+        dto.setDurable(true);
+        dto.setDeadLetterExchange("pedidos.dlx");
+        dto.setDeadLetterRoutingKey("pedidos.dlq.key");
+
+        service.createQueue(dto);
+
+        ArgumentCaptor<Queue> captor = ArgumentCaptor.forClass(Queue.class);
+        verify(amqpAdmin).declareQueue(captor.capture());
+        assertEquals("pedidos.dlx", captor.getValue().getArguments().get("x-dead-letter-exchange"));
+        assertEquals("pedidos.dlq.key", captor.getValue().getArguments().get("x-dead-letter-routing-key"));
+    }
+
+    @Test
     @DisplayName("Eliminar cola: delega en AmqpAdmin y retorna su resultado")
     void deleteQueue() {
         when(amqpAdmin.deleteQueue("cola.test")).thenReturn(true);
